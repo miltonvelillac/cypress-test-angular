@@ -4,6 +4,8 @@ This is modified and more lightweight version of original application to practic
 
 The original repo is here: https://github.com/akveo/ngx-admin
 
+# SCRIPTS
+* npx cypress open
 
 # STRUCTURE
 * support -> index.js = the first execution file, all the code added there will be executed at the first time, is common used to add libraries
