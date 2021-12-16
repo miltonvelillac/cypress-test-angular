@@ -174,7 +174,7 @@ describe("Our first suite #Forms", () => {
   });
 });
 
-describe.only("Modal & Overlays", () => {
+describe("Modal & Overlays", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.contains("Modal & Overlays").click();
@@ -185,15 +185,50 @@ describe.only("Modal & Overlays", () => {
       cy.contains("Toastr").click();
     });
 
-    it('check boxes', () => {
-        // the check method only will check the elements even it they were selected, this method will not uncheck if the method was previous selected
-        // cy.get('[type="checkbox"]').check({force: true});
+    it("check boxes", () => {
+      // the check method only will check the elements even it they were selected, this method will not uncheck if the method was previous selected
+      // cy.get('[type="checkbox"]').check({force: true});
 
-        // If we want a more real behavior we should use click method per element
-        cy.get('[type="checkbox"]').eq(0).click({force: true});
-        cy.get('[type="checkbox"]').eq(1).click({force: true});
-        cy.get('[type="checkbox"]').eq(2).click({force: true});
+      // If we want a more real behavior we should use click method per element
+      cy.get('[type="checkbox"]').eq(0).click({ force: true });
+      cy.get('[type="checkbox"]').eq(1).click({ force: true });
+      cy.get('[type="checkbox"]').eq(2).click({ force: true });
+    });
+  });
 
+  describe.only("#Root", () => {
+    beforeEach(() => {
+      cy.visit("/");
+    });
+
+    it("lists and dropdowns", () => {
+        //1
+        // cy.get('nav nb-select').click();
+        // cy.get('.options-list').contains('Dark').click();
+        // cy.get('nav nb-select').should('contain', 'Dark');
+        // cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)');
+
+        //2
+        const colors = {
+            'Light': 'rgb(255, 255, 255)',
+            'Dark': 'rgb(34, 43, 69)',
+            'Cosmic': 'rgb(50, 50, 89)',
+            'Corporate': 'rgb(255, 255, 255)',
+        };
+
+        cy.get('nav nb-select').then( dropdown => {
+            cy.wrap(dropdown).click();
+            cy.get('.options-list nb-option').each((listItem, index, array) => {
+                const itemText = listItem.text().trim();
+                cy.wrap(listItem).click();
+                cy.wrap(dropdown).should('contain', itemText);
+                cy.get('nb-layout-header nav').should('have.css', 'background-color', colors[itemText]);
+
+                if (index < array.length - 1) {
+                    cy.wrap(dropdown).click();
+                }
+            });
+        });
     });
   });
 });
