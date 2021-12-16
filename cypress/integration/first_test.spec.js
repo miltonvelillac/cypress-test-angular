@@ -9,7 +9,6 @@ describe("Forms", () => {
   });
   describe("#Form Layouts", () => {
     beforeEach(() => {
-      NavigationPage.goToForms.root();
       NavigationPage.goToForms.goToFormLayoutPage();
     });
 
@@ -157,7 +156,6 @@ describe("Forms", () => {
 
   describe("#Datepicker", () => {
     beforeEach(() => {
-      NavigationPage.goToForms.root();
       NavigationPage.goToForms.goToDatePicker();
     });
 
@@ -220,7 +218,6 @@ describe("Modal & Overlays", () => {
 
   describe("#Toastr", () => {
     beforeEach(() => {
-      NavigationPage.goToModalsOverlays.root();
       NavigationPage.goToModalsOverlays.goToToastr();
     });
 
@@ -237,7 +234,6 @@ describe("Modal & Overlays", () => {
 
   describe("#Tooltip", () => {
     beforeEach(() => {
-      NavigationPage.goToModalsOverlays.root();
       NavigationPage.goToModalsOverlays.goToTooltip();
     });
 
@@ -295,7 +291,6 @@ describe("#Tables", () => {
 
   describe("#Smart Table", () => {
     beforeEach(() => {
-      NavigationPage.goToTableAndData.root();
       NavigationPage.goToTableAndData.goToSmartTable();
     });
 
