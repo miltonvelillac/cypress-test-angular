@@ -5,7 +5,7 @@ const { NavigationPage } = require("../support/page-objects/navigation-page");
 
 describe("Forms", () => {
   beforeEach(() => {
-    NavigationPage.goToAppRoot();
+    cy.openHomePage();
   });
   describe("#Form Layouts", () => {
     beforeEach(() => {
@@ -213,7 +213,7 @@ describe("Forms", () => {
 
 describe("Modal & Overlays", () => {
   beforeEach(() => {
-    NavigationPage.goToAppRoot();
+    cy.openHomePage();
   });
 
   describe("#Toastr", () => {
@@ -246,7 +246,7 @@ describe("Modal & Overlays", () => {
 
 describe("#Root", () => {
   beforeEach(() => {
-    NavigationPage.goToAppRoot();
+    cy.openHomePage();
   });
 
   it("lists and dropdowns", () => {
@@ -286,7 +286,7 @@ describe("#Root", () => {
 
 describe("#Tables", () => {
   beforeEach(() => {
-    NavigationPage.goToAppRoot();
+    cy.openHomePage();
   });
 
   describe("#Smart Table", () => {

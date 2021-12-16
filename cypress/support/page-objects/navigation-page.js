@@ -1,8 +1,4 @@
 export class NavigationPage {
-    static goToAppRoot() {
-        cy.visit("/");
-    }
-
     static openMainMenuOption(menuOption) {
         cy.contains('a', menuOption).then(menu => {
             cy.wrap(menu).find('.expand-state g g').invoke('attr', 'data-name').then(attr => {
