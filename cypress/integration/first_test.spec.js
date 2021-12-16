@@ -2,7 +2,7 @@
 
 const { equal } = require("assert");
 
-describe("Our first suite #Forms", () => {
+describe("Forms", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.contains("Forms").click();
@@ -107,11 +107,16 @@ describe("Our first suite #Forms", () => {
 
     it("invoke command", () => {
       //1
-      cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
+      cy.get('[for="exampleInputEmail1"]')
+        .should("contain", "Email address")
+        .should('have.class', 'label')
+        .should('have.text', 'Email address');
 
       //2
       cy.get('[for="exampleInputEmail1"]').then((label) => {
         expect(label.text()).to.equal("Email address");
+        expect(label).to.have.class('label');
+        expect(label).to.have.text("Email address");
       });
 
       //3
@@ -150,7 +155,7 @@ describe("Our first suite #Forms", () => {
     });
   });
 
-  describe.only("#Datepicker", () => {
+  describe("#Datepicker", () => {
     beforeEach(() => {
       cy.contains("Datepicker").click();
     });
@@ -172,7 +177,7 @@ describe("Our first suite #Forms", () => {
         });
     });
 
-    it.only("second date test", () => {
+    it("second date test", () => {
       const date = new Date();
       date.setDate(date.getDate() + 90);
       const futureDay = date.getDate();
@@ -201,6 +206,7 @@ describe("Our first suite #Forms", () => {
               });
           }
           cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert);
+          cy.wrap(input).should('have.value', dateAssert);
         });
     });
   });
@@ -224,6 +230,18 @@ describe("Modal & Overlays", () => {
       cy.get('[type="checkbox"]').eq(0).click({ force: true });
       cy.get('[type="checkbox"]').eq(1).click({ force: true });
       cy.get('[type="checkbox"]').eq(2).click({ force: true });
+    });
+  });
+
+  describe("#Tooltip", () => {
+    beforeEach(() => {
+      cy.contains("Tooltip").click();
+    });
+
+    it("tooltip", () => {
+      cy.contains('nb-card', 'Colored Tooltips')
+        .contains('Default').click();
+    cy.get('nb-tooltip').should('contain', 'This is a tooltip');
     });
   });
 });
@@ -323,6 +341,29 @@ describe("#Tables", () => {
           }
         });
       });
+    });
+
+    it('dialog box', () => {
+        //NOTE: cypress automatically confirm the window dialog message
+
+        const alertMessage = 'Are you sure you want to delete?';
+
+        //1: not recomended because the expect is executed if cypress detect a window:confirm event, if this event is not dispatched the expect won't executed
+        // cy.get('tbody tr').first().find('.nb-trash').click();
+        // cy.on('window:confirm', (confirm) => {
+        //     expect(confirm).to.equal(alertMessage);
+        // });
+
+        //2 this is better than the above solution because if the application doesn't execute the dialog the test will fail
+        const stub = cy.stub();
+        cy.on('window:confirm', stub);
+        cy.get('tbody tr').first().find('.nb-trash').click().then(() => {
+            expect(stub.getCall(0)).to.be.calledWith(alertMessage);
+        });
+
+        //3 to cancel the dialog message
+        // cy.get('tbody tr').first().find('.nb-trash').click();
+        // cy.on('window:confirm', () => false);
     });
   });
 });
