@@ -2,143 +2,198 @@
 
 const { equal } = require("assert");
 
-describe('Our first suite', () => {
-    it('first test', () => {
-        cy.visit('/');
-        cy.contains('Forms').click();
-        cy.contains('Form Layouts').click();
+describe("Our first suite #Forms", () => {
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+  });
 
-        // by tag name
-        cy.get('input');
-
-        // by id
-        cy.get('#inputEmail1');
-
-        // by class name
-        cy.get('.input-full-width');
-
-        // by attribute name
-        cy.get('[placeholder]')
-
-        // by attribute name and value
-        cy.get('[placeholder="Email"]');
-
-        // by class value (the difference between class name is that here the whole value should match, not only one class but with the class name it is enough only with one class)
-        cy.get('[class="input-full-width size-medium shape-rectangle"]');
-
-        // by tag name and attribute with value
-        cy.get('input[placeholder="Email"]');
-
-        // by two different attributes
-        cy.get('[placeholder="Email"][type="email"]');
-
-        // by tag name, attribut with value, ID and Class name
-        cy.get('input[placeholder="Email"]#inputEmail1.input-full-width');
-
-        // The most recommended way by Cypress (create your own testing attributes)
-        cy.get('[data-cy="imputEmail1"]');
+  describe("#Form Layouts", () => {
+    beforeEach(() => {
+      cy.contains("Form Layouts").click();
     });
 
-    it('second test', () => {
-        cy.visit('/');
-        cy.contains('Forms').click();
-        cy.contains('Form Layouts').click();
+    it("first test", () => {
+      // by tag name
+      cy.get("input");
 
-        cy.get('[data-cy="singnInButton"]');
-        cy.contains('Sign in');
-        cy.contains('[status="warning"]','Sign in');
+      // by id
+      cy.get("#inputEmail1");
 
-        // find can only be use to get the child elements inside in a parent element, so it is necessary to get the parent first, i.e. using parents(....)
-        cy.get('#inputEmail3')
-            .parents('form')
-            .find('button')
-            .should('contain', 'Sign in')
-            .parents('form')
-            .find('nb-checkbox')
-            .click();
-        cy.contains('nb-card', 'Horizontal form').find('[type="email"]');
+      // by class name
+      cy.get(".input-full-width");
+
+      // by attribute name
+      cy.get("[placeholder]");
+
+      // by attribute name and value
+      cy.get('[placeholder="Email"]');
+
+      // by class value (the difference between class name is that here the whole value should match, not only one class but with the class name it is enough only with one class)
+      cy.get('[class="input-full-width size-medium shape-rectangle"]');
+
+      // by tag name and attribute with value
+      cy.get('input[placeholder="Email"]');
+
+      // by two different attributes
+      cy.get('[placeholder="Email"][type="email"]');
+
+      // by tag name, attribut with value, ID and Class name
+      cy.get('input[placeholder="Email"]#inputEmail1.input-full-width');
+
+      // The most recommended way by Cypress (create your own testing attributes)
+      cy.get('[data-cy="imputEmail1"]');
     });
 
-    it('then and wrap methods', async () => {
-        cy.visit('/');
-        cy.contains('Forms').click();
-        cy.contains('Form Layouts').click();
+    it("second test", () => {
+      cy.get('[data-cy="singnInButton"]');
+      cy.contains("Sign in");
+      cy.contains('[status="warning"]', "Sign in");
 
-        cy.contains('nb-card', 'Using the Grid').find('[for="inputEmail1"]').should('contain', 'Email');
-        cy.contains('nb-card', 'Using the Grid').find('[for="inputPassword2"]').should('contain', 'Password');
+      // find can only be use to get the child elements inside in a parent element, so it is necessary to get the parent first, i.e. using parents(....)
+      cy.get("#inputEmail3")
+        .parents("form")
+        .find("button")
+        .should("contain", "Sign in")
+        .parents("form")
+        .find("nb-checkbox")
+        .click();
+      cy.contains("nb-card", "Horizontal form").find('[type="email"]');
+    });
 
-        cy.contains('nb-card', 'Basic form').find('[for="exampleInputEmail1"]').should('contain', 'Email address');
-        cy.contains('nb-card', 'Basic form').find('[for="exampleInputPassword1"]').should('contain', 'Password');
+    it("then and wrap methods", async () => {
+      cy.contains("nb-card", "Using the Grid")
+        .find('[for="inputEmail1"]')
+        .should("contain", "Email");
+      cy.contains("nb-card", "Using the Grid")
+        .find('[for="inputPassword2"]')
+        .should("contain", "Password");
 
-        // selenium style
-        // this doesn't work correctly because with cypress we cannot save the context in a variable 'cause cypress runs asyncronous
-        // const firstForm = cy.contains('nb-card', 'Using the Grid');
-        // const secondForm = cy.contains('nb-card', 'Basic form');
+      cy.contains("nb-card", "Basic form")
+        .find('[for="exampleInputEmail1"]')
+        .should("contain", "Email address");
+      cy.contains("nb-card", "Basic form")
+        .find('[for="exampleInputPassword1"]')
+        .should("contain", "Password");
 
-        // firstForm.find('[for="inputEmail1"]');
-        // firstForm.find('[for="inputPassword2"]');
+      // selenium style
+      // this doesn't work correctly because with cypress we cannot save the context in a variable 'cause cypress runs asyncronous
+      // const firstForm = cy.contains('nb-card', 'Using the Grid');
+      // const secondForm = cy.contains('nb-card', 'Basic form');
 
-        // secondForm.find('[for="exampleInputEmail1"]');
-        // secondForm.find('[for="exampleInputPassword1"]');
+      // firstForm.find('[for="inputEmail1"]');
+      // firstForm.find('[for="inputPassword2"]');
 
-        // cypress style
-        cy.contains('nb-card', 'Using the Grid').then(firstForm => {
-            const emailLabelFirst = firstForm.find('[for="inputEmail1"]').text();
-            const passwordLabelFirst = firstForm.find('[for="inputPassword2"]').text();
-            expect(emailLabelFirst).to.equal('Email');
-            expect(passwordLabelFirst).to.equal('Password');
+      // secondForm.find('[for="exampleInputEmail1"]');
+      // secondForm.find('[for="exampleInputPassword1"]');
 
-            cy.contains('nb-card', 'Basic form').then(secondForm => {
-                const passwordSecond = secondForm.find('[for="exampleInputPassword1"]').text();
-                expect(passwordSecond).to.equal(passwordLabelFirst);
-            });
+      // cypress style
+      cy.contains("nb-card", "Using the Grid").then((firstForm) => {
+        const emailLabelFirst = firstForm.find('[for="inputEmail1"]').text();
+        const passwordLabelFirst = firstForm
+          .find('[for="inputPassword2"]')
+          .text();
+        expect(emailLabelFirst).to.equal("Email");
+        expect(passwordLabelFirst).to.equal("Password");
+
+        cy.contains("nb-card", "Basic form").then((secondForm) => {
+          const passwordSecond = secondForm
+            .find('[for="exampleInputPassword1"]')
+            .text();
+          expect(passwordSecond).to.equal(passwordLabelFirst);
+        });
+      });
+    });
+
+    it("invoke command", () => {
+      //1
+      cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
+
+      //2
+      cy.get('[for="exampleInputEmail1"]').then((label) => {
+        expect(label.text()).to.equal("Email address");
+      });
+
+      //3
+      cy.get('[for="exampleInputEmail1"]')
+        .invoke("text")
+        .then((text) => {
+          expect(text).to.equal("Email address");
+        });
+
+      cy.contains("nb-card", "Basic form")
+        .find("nb-checkbox")
+        .click()
+        .find(".custom-checkbox")
+        .invoke("attr", "class")
+        // .should('contain', 'check');
+        .then((classValue) => {
+          expect(classValue).to.contain("check");
         });
     });
 
-    it('invoke command', () => {
-        cy.visit('/');
-        cy.contains('Forms').click();
-        cy.contains('Form Layouts').click();
+    it("radio button", () => {
+      cy.contains("nb-card", "Using the Grid")
+        .find('[type="radio"]')
+        .then((radioButtons) => {
+          cy.wrap(radioButtons)
+            .first() // or eq(0)
+            .check({ force: true })
+            .should("be.checked");
 
-        //1
-        cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address');
+          cy.wrap(radioButtons).eq(1).check({ force: true });
 
-        //2
-        cy.get('[for="exampleInputEmail1"]').then(label => {
-            expect(label.text()).to.equal('Email address');
-        });
+          cy.wrap(radioButtons).first().should("not.be.checked");
 
-        //3
-        cy.get('[for="exampleInputEmail1"]').invoke('text').then(text => {
-            expect(text).to.equal('Email address');
-        });
-
-        cy.contains('nb-card', 'Basic form')
-            .find('nb-checkbox')
-            .click()
-            .find('.custom-checkbox')
-            .invoke('attr', 'class')
-            // .should('contain', 'check');
-            .then(classValue => {
-                expect(classValue).to.contain('check');
-            });
-    });
-
-    it.only('assert property', () => {
-        const currentYear = new Date().getFullYear();
-
-        cy.visit('/');
-        cy.contains('Forms').click();
-        cy.contains('Datepicker').click();
-
-        cy.contains('nb-card', 'Common Datepicker').find('input').then(input => {
-            cy.wrap(input).click();
-
-            cy.get('nb-calendar-navigation').find('button').click();
-            cy.get('nb-calendar-year-picker').contains(currentYear).click();
-            cy.get('nb-calendar-month-picker').contains('Dec').click();
-            cy.get('nb-calendar-day-picker').contains('17').click();
-            cy.wrap(input).invoke('prop', 'value').should('contain', `Dec 17, ${currentYear}`)
+          cy.wrap(radioButtons).eq(2).should("be.disabled");
         });
     });
+  });
+
+  describe("#Datepicker", () => {
+    beforeEach(() => {
+      cy.contains("Datepicker").click();
+    });
+
+    it("assert property", () => {
+      const currentYear = new Date().getFullYear();
+      cy.contains("nb-card", "Common Datepicker")
+        .find("input")
+        .then((input) => {
+          cy.wrap(input).click();
+
+          cy.get("nb-calendar-navigation").find("button").click();
+          cy.get("nb-calendar-year-picker").contains(currentYear).click();
+          cy.get("nb-calendar-month-picker").contains("Dec").click();
+          cy.get("nb-calendar-day-picker").contains("17").click();
+          cy.wrap(input)
+            .invoke("prop", "value")
+            .should("contain", `Dec 17, ${currentYear}`);
+        });
+    });
+  });
+});
+
+describe.only("Modal & Overlays", () => {
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains("Modal & Overlays").click();
+  });
+
+  describe("#Toastr", () => {
+    beforeEach(() => {
+      cy.contains("Toastr").click();
+    });
+
+    it('check boxes', () => {
+        // the check method only will check the elements even it they were selected, this method will not uncheck if the method was previous selected
+        // cy.get('[type="checkbox"]').check({force: true});
+
+        // If we want a more real behavior we should use click method per element
+        cy.get('[type="checkbox"]').eq(0).click({force: true});
+        cy.get('[type="checkbox"]').eq(1).click({force: true});
+        cy.get('[type="checkbox"]').eq(2).click({force: true});
+
+    });
+  });
 });
