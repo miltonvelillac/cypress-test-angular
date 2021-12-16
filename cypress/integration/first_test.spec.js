@@ -1,16 +1,16 @@
 /// <reference types="cypress" />
 
 const { equal } = require("assert");
+const { NavigationPage } = require("../support/page-objects/navigation-page");
 
 describe("Forms", () => {
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains("Forms").click();
+    NavigationPage.goToAppRoot();
   });
-
   describe("#Form Layouts", () => {
     beforeEach(() => {
-      cy.contains("Form Layouts").click();
+      NavigationPage.goToForms.root();
+      NavigationPage.goToForms.goToFormLayoutPage();
     });
 
     it("first test", () => {
@@ -109,13 +109,13 @@ describe("Forms", () => {
       //1
       cy.get('[for="exampleInputEmail1"]')
         .should("contain", "Email address")
-        .should('have.class', 'label')
-        .should('have.text', 'Email address');
+        .should("have.class", "label")
+        .should("have.text", "Email address");
 
       //2
       cy.get('[for="exampleInputEmail1"]').then((label) => {
         expect(label.text()).to.equal("Email address");
-        expect(label).to.have.class('label');
+        expect(label).to.have.class("label");
         expect(label).to.have.text("Email address");
       });
 
@@ -157,7 +157,8 @@ describe("Forms", () => {
 
   describe("#Datepicker", () => {
     beforeEach(() => {
-      cy.contains("Datepicker").click();
+      NavigationPage.goToForms.root();
+      NavigationPage.goToForms.goToDatePicker();
     });
 
     it("assert property", () => {
@@ -205,8 +206,8 @@ describe("Forms", () => {
                 }
               });
           }
-          cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert);
-          cy.wrap(input).should('have.value', dateAssert);
+          cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
+          cy.wrap(input).should("have.value", dateAssert);
         });
     });
   });
@@ -214,12 +215,13 @@ describe("Forms", () => {
 
 describe("Modal & Overlays", () => {
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains("Modal & Overlays").click();
+    NavigationPage.goToAppRoot();
   });
+
   describe("#Toastr", () => {
     beforeEach(() => {
-      cy.contains("Toastr").click();
+      NavigationPage.goToModalsOverlays.root();
+      NavigationPage.goToModalsOverlays.goToToastr();
     });
 
     it("check boxes", () => {
@@ -235,20 +237,20 @@ describe("Modal & Overlays", () => {
 
   describe("#Tooltip", () => {
     beforeEach(() => {
-      cy.contains("Tooltip").click();
+      NavigationPage.goToModalsOverlays.root();
+      NavigationPage.goToModalsOverlays.goToTooltip();
     });
 
     it("tooltip", () => {
-      cy.contains('nb-card', 'Colored Tooltips')
-        .contains('Default').click();
-    cy.get('nb-tooltip').should('contain', 'This is a tooltip');
+      cy.contains("nb-card", "Colored Tooltips").contains("Default").click();
+      cy.get("nb-tooltip").should("contain", "This is a tooltip");
     });
   });
 });
 
 describe("#Root", () => {
   beforeEach(() => {
-    cy.visit("/");
+    NavigationPage.goToAppRoot();
   });
 
   it("lists and dropdowns", () => {
@@ -288,13 +290,13 @@ describe("#Root", () => {
 
 describe("#Tables", () => {
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains("Tables & Data").click();
+    NavigationPage.goToAppRoot();
   });
 
   describe("#Smart Table", () => {
     beforeEach(() => {
-      cy.contains("Smart Table").click();
+      NavigationPage.goToTableAndData.root();
+      NavigationPage.goToTableAndData.goToSmartTable();
     });
 
     it("Edit", () => {
@@ -343,27 +345,31 @@ describe("#Tables", () => {
       });
     });
 
-    it('dialog box', () => {
-        //NOTE: cypress automatically confirm the window dialog message
+    it("dialog box", () => {
+      //NOTE: cypress automatically confirm the window dialog message
 
-        const alertMessage = 'Are you sure you want to delete?';
+      const alertMessage = "Are you sure you want to delete?";
 
-        //1: not recomended because the expect is executed if cypress detect a window:confirm event, if this event is not dispatched the expect won't executed
-        // cy.get('tbody tr').first().find('.nb-trash').click();
-        // cy.on('window:confirm', (confirm) => {
-        //     expect(confirm).to.equal(alertMessage);
-        // });
+      //1: not recomended because the expect is executed if cypress detect a window:confirm event, if this event is not dispatched the expect won't executed
+      // cy.get('tbody tr').first().find('.nb-trash').click();
+      // cy.on('window:confirm', (confirm) => {
+      //     expect(confirm).to.equal(alertMessage);
+      // });
 
-        //2 this is better than the above solution because if the application doesn't execute the dialog the test will fail
-        const stub = cy.stub();
-        cy.on('window:confirm', stub);
-        cy.get('tbody tr').first().find('.nb-trash').click().then(() => {
-            expect(stub.getCall(0)).to.be.calledWith(alertMessage);
+      //2 this is better than the above solution because if the application doesn't execute the dialog the test will fail
+      const stub = cy.stub();
+      cy.on("window:confirm", stub);
+      cy.get("tbody tr")
+        .first()
+        .find(".nb-trash")
+        .click()
+        .then(() => {
+          expect(stub.getCall(0)).to.be.calledWith(alertMessage);
         });
 
-        //3 to cancel the dialog message
-        // cy.get('tbody tr').first().find('.nb-trash').click();
-        // cy.on('window:confirm', () => false);
+      //3 to cancel the dialog message
+      // cy.get('tbody tr').first().find('.nb-trash').click();
+      // cy.on('window:confirm', () => false);
     });
   });
 });
