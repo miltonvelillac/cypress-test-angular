@@ -150,7 +150,7 @@ describe("Our first suite #Forms", () => {
     });
   });
 
-  describe("#Datepicker", () => {
+  describe.only("#Datepicker", () => {
     beforeEach(() => {
       cy.contains("Datepicker").click();
     });
@@ -171,6 +171,38 @@ describe("Our first suite #Forms", () => {
             .should("contain", `Dec 17, ${currentYear}`);
         });
     });
+
+    it.only("second date test", () => {
+      const date = new Date();
+      date.setDate(date.getDate() + 90);
+      const futureDay = date.getDate();
+      const futureMonth = date.toLocaleString("default", { month: "short" });
+      const dateAssert = `${futureMonth} ${futureDay}, ${date.getFullYear()}`;
+
+      cy.contains("nb-card", "Common Datepicker")
+        .find("input")
+        .then((input) => {
+          cy.wrap(input).click();
+          selectDayFromCurrent();
+          function selectDayFromCurrent() {
+            cy.get("nb-calendar-navigation")
+              .invoke("attr", "ng-reflect-date")
+              .then((dateAttribute) => {
+                if (!dateAttribute.includes(futureMonth)) {
+                  cy.get('[data-name="chevron-right"]').click();
+                  selectDayFromCurrent();
+                } else {
+                  cy.get(
+                    'nb-calendar-day-picker [class="day-cell ng-star-inserted"]'
+                  )
+                    .contains(futureDay)
+                    .click();
+                }
+              });
+          }
+          cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert);
+        });
+    });
   });
 });
 
@@ -179,7 +211,6 @@ describe("Modal & Overlays", () => {
     cy.visit("/");
     cy.contains("Modal & Overlays").click();
   });
-
   describe("#Toastr", () => {
     beforeEach(() => {
       cy.contains("Toastr").click();
@@ -195,93 +226,103 @@ describe("Modal & Overlays", () => {
       cy.get('[type="checkbox"]').eq(2).click({ force: true });
     });
   });
+});
 
-  describe("#Root", () => {
-    beforeEach(() => {
-      cy.visit("/");
-    });
-
-    it("lists and dropdowns", () => {
-        //1
-        // cy.get('nav nb-select').click();
-        // cy.get('.options-list').contains('Dark').click();
-        // cy.get('nav nb-select').should('contain', 'Dark');
-        // cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)');
-
-        //2
-        const colors = {
-            'Light': 'rgb(255, 255, 255)',
-            'Dark': 'rgb(34, 43, 69)',
-            'Cosmic': 'rgb(50, 50, 89)',
-            'Corporate': 'rgb(255, 255, 255)',
-        };
-
-        cy.get('nav nb-select').then( dropdown => {
-            cy.wrap(dropdown).click();
-            cy.get('.options-list nb-option').each((listItem, index, array) => {
-                const itemText = listItem.text().trim();
-                cy.wrap(listItem).click();
-                cy.wrap(dropdown).should('contain', itemText);
-                cy.get('nb-layout-header nav').should('have.css', 'background-color', colors[itemText]);
-
-                if (index < array.length - 1) {
-                    cy.wrap(dropdown).click();
-                }
-            });
-        });
-    });
+describe("#Root", () => {
+  beforeEach(() => {
+    cy.visit("/");
   });
 
-  describe.only('#Tables', () => {
+  it("lists and dropdowns", () => {
+    //1
+    // cy.get('nav nb-select').click();
+    // cy.get('.options-list').contains('Dark').click();
+    // cy.get('nav nb-select').should('contain', 'Dark');
+    // cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)');
+
+    //2
+    const colors = {
+      Light: "rgb(255, 255, 255)",
+      Dark: "rgb(34, 43, 69)",
+      Cosmic: "rgb(50, 50, 89)",
+      Corporate: "rgb(255, 255, 255)",
+    };
+
+    cy.get("nav nb-select").then((dropdown) => {
+      cy.wrap(dropdown).click();
+      cy.get(".options-list nb-option").each((listItem, index, array) => {
+        const itemText = listItem.text().trim();
+        cy.wrap(listItem).click();
+        cy.wrap(dropdown).should("contain", itemText);
+        cy.get("nb-layout-header nav").should(
+          "have.css",
+          "background-color",
+          colors[itemText]
+        );
+
+        if (index < array.length - 1) {
+          cy.wrap(dropdown).click();
+        }
+      });
+    });
+  });
+});
+
+describe("#Tables", () => {
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains("Tables & Data").click();
+  });
+
+  describe("#Smart Table", () => {
     beforeEach(() => {
-        cy.visit('/');
-        cy.contains("Tables & Data").click();
+      cy.contains("Smart Table").click();
     });
-    
-    describe('#Smart Table', () => {
-        beforeEach(() => {
-            cy.contains("Smart Table").click();
-        });
 
-        it('Edit', () => {
-            cy.get('tbody').contains('tr', 'Larry').then(row => {
-                cy.wrap(row).find('.nb-edit').click();
-                cy.wrap(row).find('[placeholder="Age"]').clear().type('25');
-                cy.wrap(row).find('.nb-checkmark').click();
-                cy.wrap(row).find('td').eq(6).should('contain', '25');
-            });
-        });
-
-        it('Add', () => {
-            cy.get('thead').find('.nb-plus').click();
-            cy.get('thead').find('tr').eq(2).then( row => {
-                cy.wrap(row).find('[placeholder="First Name"]').type('Artem');
-                cy.wrap(row).find('[placeholder="Last Name"]').type('Bondar');
-                cy.wrap(row).find('.nb-checkmark').click();
-            });
-
-            cy.get('tbody tr').first().find('td').then(columns => {
-                cy.wrap(columns).eq(2).should('contain', 'Artem');
-                cy.wrap(columns).eq(3).should('contain', 'Bondar');
-            });
-        });
-
-        it.only('Filter', () => {
-            const ages = [20, 30, 40, 200];
-            cy.wrap(ages).each(age => {
-                cy.get('thead [placeholder="Age"]').clear().type(age);
-                cy.wait(500);
-                cy.get('tbody tr').each(row => {
-                    if(age === 200) {
-                        cy.wrap(row).should('contain', 'No data found');
-                    } else {
-                        cy.wrap(row).find('td').eq(6).should('contain', age);
-                    }
-                });
-            });
-            
+    it("Edit", () => {
+      cy.get("tbody")
+        .contains("tr", "Larry")
+        .then((row) => {
+          cy.wrap(row).find(".nb-edit").click();
+          cy.wrap(row).find('[placeholder="Age"]').clear().type("25");
+          cy.wrap(row).find(".nb-checkmark").click();
+          cy.wrap(row).find("td").eq(6).should("contain", "25");
         });
     });
 
+    it("Add", () => {
+      cy.get("thead").find(".nb-plus").click();
+      cy.get("thead")
+        .find("tr")
+        .eq(2)
+        .then((row) => {
+          cy.wrap(row).find('[placeholder="First Name"]').type("Artem");
+          cy.wrap(row).find('[placeholder="Last Name"]').type("Bondar");
+          cy.wrap(row).find(".nb-checkmark").click();
+        });
+
+      cy.get("tbody tr")
+        .first()
+        .find("td")
+        .then((columns) => {
+          cy.wrap(columns).eq(2).should("contain", "Artem");
+          cy.wrap(columns).eq(3).should("contain", "Bondar");
+        });
+    });
+
+    it("Filter", () => {
+      const ages = [20, 30, 40, 200];
+      cy.wrap(ages).each((age) => {
+        cy.get('thead [placeholder="Age"]').clear().type(age);
+        cy.wait(500);
+        cy.get("tbody tr").each((row) => {
+          if (age === 200) {
+            cy.wrap(row).should("contain", "No data found");
+          } else {
+            cy.wrap(row).find("td").eq(6).should("contain", age);
+          }
+        });
+      });
+    });
   });
 });
