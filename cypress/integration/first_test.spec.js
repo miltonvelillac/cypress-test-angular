@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+const { equal } = require("assert");
+
 describe('Our first suite', () => {
     it('first test', () => {
         cy.visit('/');
@@ -90,6 +92,53 @@ describe('Our first suite', () => {
                 const passwordSecond = secondForm.find('[for="exampleInputPassword1"]').text();
                 expect(passwordSecond).to.equal(passwordLabelFirst);
             });
+        });
+    });
+
+    it('invoke command', () => {
+        cy.visit('/');
+        cy.contains('Forms').click();
+        cy.contains('Form Layouts').click();
+
+        //1
+        cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address');
+
+        //2
+        cy.get('[for="exampleInputEmail1"]').then(label => {
+            expect(label.text()).to.equal('Email address');
+        });
+
+        //3
+        cy.get('[for="exampleInputEmail1"]').invoke('text').then(text => {
+            expect(text).to.equal('Email address');
+        });
+
+        cy.contains('nb-card', 'Basic form')
+            .find('nb-checkbox')
+            .click()
+            .find('.custom-checkbox')
+            .invoke('attr', 'class')
+            // .should('contain', 'check');
+            .then(classValue => {
+                expect(classValue).to.contain('check');
+            });
+    });
+
+    it.only('assert property', () => {
+        const currentYear = new Date().getFullYear();
+
+        cy.visit('/');
+        cy.contains('Forms').click();
+        cy.contains('Datepicker').click();
+
+        cy.contains('nb-card', 'Common Datepicker').find('input').then(input => {
+            cy.wrap(input).click();
+
+            cy.get('nb-calendar-navigation').find('button').click();
+            cy.get('nb-calendar-year-picker').contains(currentYear).click();
+            cy.get('nb-calendar-month-picker').contains('Dec').click();
+            cy.get('nb-calendar-day-picker').contains('17').click();
+            cy.wrap(input).invoke('prop', 'value').should('contain', `Dec 17, ${currentYear}`)
         });
     });
 });
