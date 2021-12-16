@@ -196,7 +196,7 @@ describe("Modal & Overlays", () => {
     });
   });
 
-  describe.only("#Root", () => {
+  describe("#Root", () => {
     beforeEach(() => {
       cy.visit("/");
     });
@@ -230,5 +230,58 @@ describe("Modal & Overlays", () => {
             });
         });
     });
+  });
+
+  describe.only('#Tables', () => {
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains("Tables & Data").click();
+    });
+    
+    describe('#Smart Table', () => {
+        beforeEach(() => {
+            cy.contains("Smart Table").click();
+        });
+
+        it('Edit', () => {
+            cy.get('tbody').contains('tr', 'Larry').then(row => {
+                cy.wrap(row).find('.nb-edit').click();
+                cy.wrap(row).find('[placeholder="Age"]').clear().type('25');
+                cy.wrap(row).find('.nb-checkmark').click();
+                cy.wrap(row).find('td').eq(6).should('contain', '25');
+            });
+        });
+
+        it('Add', () => {
+            cy.get('thead').find('.nb-plus').click();
+            cy.get('thead').find('tr').eq(2).then( row => {
+                cy.wrap(row).find('[placeholder="First Name"]').type('Artem');
+                cy.wrap(row).find('[placeholder="Last Name"]').type('Bondar');
+                cy.wrap(row).find('.nb-checkmark').click();
+            });
+
+            cy.get('tbody tr').first().find('td').then(columns => {
+                cy.wrap(columns).eq(2).should('contain', 'Artem');
+                cy.wrap(columns).eq(3).should('contain', 'Bondar');
+            });
+        });
+
+        it.only('Filter', () => {
+            const ages = [20, 30, 40, 200];
+            cy.wrap(ages).each(age => {
+                cy.get('thead [placeholder="Age"]').clear().type(age);
+                cy.wait(500);
+                cy.get('tbody tr').each(row => {
+                    if(age === 200) {
+                        cy.wrap(row).should('contain', 'No data found');
+                    } else {
+                        cy.wrap(row).find('td').eq(6).should('contain', age);
+                    }
+                });
+            });
+            
+        });
+    });
+
   });
 });
